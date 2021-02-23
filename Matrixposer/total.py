@@ -308,6 +308,7 @@ class Embeddings(nn.Module):
     '''
     Usual Embedding layer with weights multiplied by sqrt(d_model)
     '''
+
     def __init__(self, d_model, vocab, pre_trained=False):
         super(Embeddings, self).__init__()
         if pre_trained is False:
@@ -316,13 +317,15 @@ class Embeddings(nn.Module):
             self.lut = nn.Embedding.from_pretrained(vocab)
         self.d_model = d_model
 
-        self.d_model = d_model
+        # self.d_model = d_model
 
     def forward(self, x):
         return self.lut(x) * math.sqrt(self.d_model)
 
+
 class PositionalEncoding(nn.Module):
     "Implement the PE function"
+
     def __init__(self, d_model, dropout, max_len=5000):
         super(PositionalEncoding, self).__init__()
         self.dropout = nn.Dropout(p=dropout)
@@ -333,7 +336,8 @@ class PositionalEncoding(nn.Module):
         div_term = torch.exp(torch.arange(0, d_model, 2).float() *
                              -(math.log(10000.0) / d_model))
         pe[:, 0::2] = torch.sin(torch.as_tensor(position.numpy() * div_term.unsqueeze(0).numpy()))
-        pe[:, 1::2] = torch.cos(torch.as_tensor(position.numpy() * div_term.unsqueeze(0).numpy()))  # torch.cos(position * div_term)
+        pe[:, 1::2] = torch.cos(
+            torch.as_tensor(position.numpy() * div_term.unsqueeze(0).numpy()))  # torch.cos(position * div_term)
         pe = pe.unsqueeze(0)
         self.register_buffer('pe', pe)
 
@@ -341,7 +345,6 @@ class PositionalEncoding(nn.Module):
         x = x + Variable(self.pe[:, :x.size(1)],
                          requires_grad=False)
         return self.dropout(x)
-
 
 
 def get_embedding_matrix(vocab_chars):
@@ -360,40 +363,39 @@ class Dataset(object):
         self.vocab = []
         self.word_embeddings = {}
 
-    def parse_label(self, label):
-        '''
-        Get the actual labels from label string
-        Input:
-            label (string) : labels of the form '__label__2'
-        Returns:
-            label (int) : integer value corresponding to label string
-        '''
-        if not isinstance(label, str):
-            raise Exception(
-                'type of label should be str. The type of label was {}'.format(
-                    type(label)))
+    # def parse_label(self, label):
+    #     '''
+    #     Get the actual labels from label string
+    #     Input:
+    #         label (string) : labels of the form '__label__2'
+    #     Returns:
+    #         label (int) : integer value corresponding to label string
+    #     '''
+    #     if not isinstance(label, str):
+    #         raise Exception(
+    #             'type of label should be str. The type of label was {}'.format(
+    #                 type(label)))
+    #
+    #     return int(label.strip()[-1])
 
-        return int(label.strip()[-1])
-
-    def get_pandas_df(self, filename):
-        '''
-        Load the data into Pandas.DataFrame object
-        This will be used to convert data to torchtext object
-        '''
-        with open(filename, 'r') as datafile:
-            data = [line.strip().split(',', maxsplit=1) for line in datafile]
-            data_text = list(map(lambda x: x[1], data))
-            data_label = list(map(lambda x: self.parse_label(x[0]), data))
-
-        full_df = pd.DataFrame({"text": data_text, "label": data_label})
-        return full_df
+    # def get_pandas_df(self, filename):
+    #     '''
+    #     Load the data into Pandas.DataFrame object
+    #     This will be used to convert data to torchtext object
+    #     '''
+    #     with open(filename, 'r') as datafile:
+    #         data = [line.strip().split(',', maxsplit=1) for line in datafile]
+    #         data_text = list(map(lambda x: x[1], data))
+    #         data_label = list(map(lambda x: self.parse_label(x[0]), data))
+    #
+    #     full_df = pd.DataFrame({"text": data_text, "label": data_label})
+    #     return full_df
 
     def load_data(self, train_file, test_file, val_file=None, pre_trained=False):
         '''
         Loads the data from files
         Sets up iterators for training, validation and test data
         Also create vocabulary and word embeddings based on the data
-
         Inputs:
             train_file (String): absolute path to training file
             test_file (String): absolute path to test file
@@ -402,8 +404,9 @@ class Dataset(object):
         # Loading Tokenizer
         NLP = spacy.load('en')
 
-        def tokenizer(sent): return list(
-            x.text for x in NLP.tokenizer(sent) if x.text != " ")
+        def tokenizer(sent):
+            return list(
+                x.text for x in NLP.tokenizer(sent) if x.text != " ")
 
         # Creating Filed for data
         TEXT = data.Field(sequential=True, tokenize=tokenizer, lower=True, fix_length=self.config.max_sen_len)
@@ -412,17 +415,17 @@ class Dataset(object):
 
         # Load data from pd.DataFrame into torchtext.data.Dataset
         train_df = pd.read_csv(train_file)
-        train_df = train_df[['original','meanGrade']]
+        train_df = train_df[['original', 'meanGrade']]
         train_df = train_df.rename(columns={'original': "text",
-                                      'meanGrade': 'label'})
+                                            'meanGrade': 'label'})
         train_examples = [
             data.Example.fromlist(i, datafields) for i in train_df.values.tolist()]
         train_data = data.Dataset(train_examples, datafields)
 
         test_df = pd.read_csv(test_file)
-        test_df = test_df[['original','meanGrade']]
+        test_df = test_df[['original', 'meanGrade']]
         test_df = test_df.rename(columns={'original': "text",
-                                        'meanGrade': 'label'})
+                                          'meanGrade': 'label'})
         # test_df = self.get_pandas_df(test_file)
         test_examples = [
             data.Example.fromlist(
@@ -434,7 +437,7 @@ class Dataset(object):
         if val_file:
             # val_df = self.get_pandas_df(val_file)
             val_df = pd.read_csv(val_file)
-            val_df = val_df[['original','meanGrade']]
+            val_df = val_df[['original', 'meanGrade']]
             val_df = val_df.rename(columns={'original': "text",
                                             'meanGrade': 'label'})
             val_examples = [
@@ -443,16 +446,14 @@ class Dataset(object):
             val_data = data.Dataset(val_examples, datafields)
         else:
             train_data, val_data = train_data.split(split_ratio=0.8)
-        
+
         if pre_trained:
             TEXT.build_vocab(train_data, vectors='glove.6B.100d')
             self.vocab = TEXT.vocab.vectors
         else:
             TEXT.build_vocab(train_data)
             self.vocab = TEXT.vocab
-        
-        
-        
+
         self.train_iterator = data.BucketIterator(
             (train_data),
             batch_size=self.config.batch_size,
@@ -469,9 +470,9 @@ class Dataset(object):
             shuffle=False
         )
 
-        print ("Loaded {} training examples".format(len(train_data)))
-        print ("Loaded {} test examples".format(len(test_data)))
-        print ("Loaded {} validation examples".format(len(val_data)))
+        print("Loaded {} training examples".format(len(train_data)))
+        print("Loaded {} test examples".format(len(test_data)))
+        print("Loaded {} validation examples".format(len(val_data)))
 
 
 def evaluate_model(model, iterator):
@@ -487,20 +488,17 @@ def evaluate_model(model, iterator):
         predicted = y_pred.cpu().data
         all_preds.extend(predicted.numpy())
         all_y.extend(batch.label.numpy())
-    
+
     # score = accuracy_score(all_y, np.array(all_preds).flatten())
     return np.sqrt(((all_y - np.array(all_preds)) ** 2).mean())
 
-if __name__=='__main__':
+
+if __name__ == '__main__':
     torch.cuda.empty_cache()
     config = Config
     train_file = './data/train.csv'
-    if len(sys.argv) > 2:
-        train_file = sys.argv[1]
     test_file = './data/test.csv'
-    
-    if len(sys.argv) > 3:
-        test_file = sys.argv[2]
+
     val_file = './data/dev.csv'
     dataset = Dataset(config)
     dataset.load_data(train_file, test_file, val_file, config.pre_trained)
@@ -510,7 +508,11 @@ if __name__=='__main__':
         model.cuda()
     model.train()
     optimizer = optim.Adam(model.parameters(), lr=config.lr)
-    def RMSELoss(yhat,y): return torch.sqrt(torch.mean((yhat-y)**2)) 
+
+
+    def RMSELoss(yhat, y):
+        return torch.sqrt(torch.mean((yhat - y) ** 2))
+
 
     loss = RMSELoss
     model.add_optimizer(optimizer)
@@ -524,9 +526,9 @@ if __name__=='__main__':
         train_loss, val_accuracy = model.run_epoch(dataset.train_iterator, dataset.val_iterator, i)
         train_losses.append(train_loss)
         val_accuracies.append(val_accuracy)
-    
+
     plt.figure()
-    x = np.arange(1, config.max_epochs+1)
+    x = np.arange(1, config.max_epochs + 1)
 
     y1 = train_losses
     y2 = val_accuracies
@@ -535,12 +537,11 @@ if __name__=='__main__':
     plt.xlabel('epoch')
     plt.ylabel('loss')
     plt.title('pre-trained representations')
-    plt.xticks(np.arange(1, config.max_epochs+1))
+    plt.xticks(np.arange(1, config.max_epochs + 1))
     plt.legend()
     # plt.ylim((0,0.5))
     plt.savefig('/content/pre_trained.jpg')
-    
-    
+
     train_acc = evaluate_model(model, dataset.train_iterator)
     val_acc = evaluate_model(model, dataset.val_iterator)
     test_acc = evaluate_model(model, dataset.test_iterator)
