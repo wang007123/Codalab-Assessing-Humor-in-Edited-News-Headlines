@@ -1,51 +1,25 @@
 import torch
-from torch import nn
-from copy import deepcopy
-from train_utils import Embeddings, PositionalEncoding
-from interactor import Interactor
-from encoder import EncoderLayer, Encoder
-from feed_forward import PositionwiseFeedForward
-from utils import *
-import torch
-from torch.autograd import Variable
-import torch.nn.functional as F
+import sys
+import spacy
 import math
-from torch import nn
+import copy
 
-from torch import nn
+import pandas as pd
+import numpy as np
 import torch.nn.functional as F
-
-from torch import nn
-from train_utils import clones
-from sublayer import LayerNorm, SublayerOutput
-
-import torch
-from torch import nn
+import torch.optim as optim
+from matplotlib import pyplot as plt
 
 from utils import *
 from model import *
-from config import Config
-import sys
-import torch.optim as optim
-from torch import nn
-import torch
-from matplotlib import pyplot as plt
-import numpy as np
-
-import torch
 from torch import nn
 from torch.autograd import Variable
-import copy
-import math
-
-
-import torch
+from copy import deepcopy
+from sklearn.metrics import accuracy_score
 from torchtext import data
 from torchtext.vocab import Vectors
-import pandas as pd
-import numpy as np
-import spacy
-from sklearn.metrics import accuracy_score
+
+
 
 
 class Config(object):
@@ -299,9 +273,6 @@ class SublayerOutput(nn.Module):
         "Apply residual connection to any sublayer with the same size."
         return x + self.dropout(sublayer(self.norm(x)))
 
-def clones(module, N):
-    "Produce N identical layers"
-    return nn.ModuleList([copy.deepcopy(module) for _ in range(N)])
 
 
 class Embeddings(nn.Module):
@@ -492,6 +463,9 @@ def evaluate_model(model, iterator):
     # score = accuracy_score(all_y, np.array(all_preds).flatten())
     return np.sqrt(((all_y - np.array(all_preds)) ** 2).mean())
 
+def clones(module, N):
+    "Produce N identical layers"
+    return nn.ModuleList([copy.deepcopy(module) for _ in range(N)])
 
 if __name__ == '__main__':
     torch.cuda.empty_cache()
