@@ -38,6 +38,6 @@ So the last section will be used to generate the CSV output file, which named”
 
  *****Example code of our hyperparameter tuning******* -- 
 We leave some example code for how we run our hyperparamter tuning and how we draw the analysis diagram, it been placed at the bottom of our notebook.
-Meanwhile, if you would like to run our hyper-parameter experiments, you also need to delete the result part of the train() and replace it with the one we made comments.
+Meanwhile, if you would like to run our hyper-parameter experiments, you also need to delete the return part of the train() and replace it with the one we made comments.
 
 
