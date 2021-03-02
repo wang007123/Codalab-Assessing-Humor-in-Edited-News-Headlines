@@ -1,11 +1,9 @@
-******Notice:****** -- 
-1. We git cloned our GitHub repository at the first code cell to load data files, which contains the whole train, dev and test files. 
-2. We made some modification on train(), which will return prediction output by given the test dataset we found online.
+******Notice:****** <br/>
+1. We git cloned our GitHub repository at the first code cell to load data files, which contains the whole train, dev and test files. <br/>
+2. We made some modification on train(), which will return prediction output by given the test dataset we found online.<br/>
 
-
-******How to run:****** -- 
+******How to run:****** <br/>
 Directly compile all the code.
-
 
 ******Parameter setting***** <br/>
 The parameters have been defined in the Config class. <br/>
@@ -17,7 +15,6 @@ For example,<br/>
 “config.pre_trained = True”       (“Ture” - Approach 1 with pre-trained  Approach 2 with no pre-trained)<br/>
 “config.lr = 0.1”                       (Learning rate = 0.1)<br/>
 “config.dropout = 0.1”              (Dropout rate = 0.1)<br/>
-
 
 ******For the Approach 1****** <br/>
 Run all cells before and including the cell of Approach ONE. <br/>
