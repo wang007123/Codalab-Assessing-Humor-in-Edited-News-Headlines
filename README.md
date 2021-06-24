@@ -1,6 +1,7 @@
 ******Notice:****** <br/>
 1. We git cloned our GitHub repository at the first code cell to load data files, which contains the whole train, dev and test files. <br/>
 2. We made some modification on train(), which will return prediction output by given the test dataset we found online.<br/>
+3. task-1-main.ipynb is the main file.
 
 ******How to run:****** <br/>
 Directly compile all the code.
